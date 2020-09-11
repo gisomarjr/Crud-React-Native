@@ -15,7 +15,6 @@ For run the application is necessary:
 ```shell
 npm install -g yarn
 yarn global add react-native-cli
-react-native init sample
 npm install -g expo-cli
 ```
 
