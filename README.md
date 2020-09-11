@@ -1,4 +1,4 @@
-# Crud-React-Native
+# Crud React Native
 Activity of the POS
 
 # Dependencies
