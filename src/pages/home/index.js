@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, Button } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
 import api from "../../services/service";
-
-const DATA = [
-    {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        nome: "Default",
-    },
-];
+import { Header, } from 'react-native-elements';
 
 const Item = ({ item, onPress, style }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-        <Text style={styles.title}>{item.nome}</Text>
+        <Text style={styles.title}>{item.cpf} - {item.nome}</Text>
     </TouchableOpacity>
 );
 
-const Home = () => {
+export default function Home({ route, navigation }) {
     const [selectedId, setSelectedId] = useState(null);
-    const [clients, setClients] = useState(DATA);
-
+    const [clients, setClients] = useState([]);
 
     useEffect(() => {
+
         async function getClients() {
             try {
                 await api
@@ -35,45 +30,63 @@ const Home = () => {
             }
         }
         getClients();
-    }, []);
+    });
+
+
+    const setSelected = function(item) {
+        console.log(item);
+        if (item) {
+            setSelectedId(item.id);
+            navigation.navigate('Save', {
+                nome: item.nome,
+                telefone: item.telefone,
+                cpf: item.cpf,
+                id: item.id,
+                alterar: true
+            })
+        }
+    }
+
+
 
     const renderItem = ({ item }) => {
-        const backgroundColor = item.id === selectedId ? "#6e3b6e" : "#f9c2ff";
+        const backgroundColor = item.id === selectedId ? "#5F9EA0" : "#F8F8FF";
 
         return (
             <Item
                 item={item}
-                onPress={() => setSelectedId(item.id)}
+                onPress={() => setSelected(item)}
                 style={{ backgroundColor }}
             />
         );
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View>
+            <Header
+                centerComponent={{ text: 'Home - IFPE', style: { color: '#fff', fontSize: 20 } }}
+                rightComponent={<Button color="#fff" title="+" onPress={() => navigation.navigate('Save', { save: true })}></Button>}
+                backgroundColor="#5F9EA0"
+            />
+
             <FlatList
                 data={clients}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 extraData={selectedId}
             />
-        </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: StatusBar.currentHeight || 0,
-    },
+
     item: {
         padding: 20,
-        marginVertical: 8,
-        marginHorizontal: 16,
+        marginVertical: 2,
+        marginHorizontal: 2,
     },
     title: {
-        fontSize: 32,
+        fontSize: 18,
     },
 });
-
-export default Home;
